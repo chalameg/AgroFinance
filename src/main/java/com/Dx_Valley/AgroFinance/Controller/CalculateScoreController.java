@@ -1,5 +1,7 @@
 package com.Dx_Valley.AgroFinance.Controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -7,14 +9,17 @@ import com.Dx_Valley.AgroFinance.DTO.AssetRequest;
 import com.Dx_Valley.AgroFinance.DTO.AssetWithStatusRequest;
 import com.Dx_Valley.AgroFinance.DTO.ScoreRequest;
 import com.Dx_Valley.AgroFinance.DTO.ScoreRequestV2;
+import com.Dx_Valley.AgroFinance.Enums.ScoringDataType;
 import com.Dx_Valley.AgroFinance.Models.Asset;
 import com.Dx_Valley.AgroFinance.Models.AssetWithStatus;
 import com.Dx_Valley.AgroFinance.Models.Education;
 import com.Dx_Valley.AgroFinance.Models.FarmerAge;
+import com.Dx_Valley.AgroFinance.Models.ScoringData;
 import com.Dx_Valley.AgroFinance.Repository.AssetRepository;
 import com.Dx_Valley.AgroFinance.Repository.AssetWithStatusRepository;
 import com.Dx_Valley.AgroFinance.Repository.EducationRepository;
 import com.Dx_Valley.AgroFinance.Repository.FarmerAgeRepository;
+import com.Dx_Valley.AgroFinance.Service.ScoringDataService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +31,7 @@ public class CalculateScoreController {
     private final AssetWithStatusRepository assetWithStatusRepository;
     private final FarmerAgeRepository farmerAgeRepository;
     private final EducationRepository educationRepository;
+    private final ScoringDataService scoringDataService;
 
     // note create different table for registaring weight for each assets
 
@@ -108,16 +114,25 @@ public class CalculateScoreController {
     }
 
     @PostMapping("/calculatev2")
-    private ResponseEntity<Long> calculateScorev2(@RequestBody ScoreRequestV2 request) {
+    public ResponseEntity<Double> calculateScorev2(@RequestBody ScoreRequestV2 request) {
         Double totalScore = 0D;
-        System.out.println("########################## "+request.getLOANAPPLICATIONAMOUNT());
 
-        Long laa = request.getLOANAPPLICATIONAMOUNT();
-        // Long adb = request.getAVERAGEDAILYBALANCE();
+        List<ScoringData> scoringDataList = scoringDataService.getScoringDataByType(ScoringDataType.AVERAGEDAILYBALANCE);
+        Double laa = request.getLoanApplicationAmount();
+        Double adb= request.getAverageDailyBalance();
+        
+        Double percentage = calculatePercentage(adb, laa);
+        System.out.println("#################### "+ percentage);
 
-        // Double percentage = calculatePercentage((double)adb, (double)laa);
+        for (ScoringData data : scoringDataList) {
+            
+            if (percentage >= data.getRangeStart() && percentage <= data.getRangeEnd()) {
+                totalScore += data.getWeight();
+                break;  // Assuming only one range applies
+            }
+        }
 
-        return ResponseEntity.ok(laa);
+        return ResponseEntity.ok(totalScore);
     }
 
 

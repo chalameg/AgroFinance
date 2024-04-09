@@ -1,5 +1,6 @@
 package com.Dx_Valley.AgroFinance.Service;
 
+import com.Dx_Valley.AgroFinance.Enums.ScoringDataType;
 import com.Dx_Valley.AgroFinance.Models.ScoringData;
 
 import java.util.List;
@@ -13,4 +14,5 @@ public interface ScoringDataService {
     ScoringData createScoringData(ScoringData scoringData);
     ScoringData updateScoringData(Long id, ScoringData scoringData);
     void deleteScoringData(Long id);
+    List<ScoringData> getScoringDataByType(ScoringDataType type);
 }
