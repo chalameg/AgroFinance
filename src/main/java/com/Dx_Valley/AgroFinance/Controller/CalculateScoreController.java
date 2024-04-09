@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import com.Dx_Valley.AgroFinance.DTO.AssetRequest;
 import com.Dx_Valley.AgroFinance.DTO.AssetWithStatusRequest;
 import com.Dx_Valley.AgroFinance.DTO.ScoreRequest;
+import com.Dx_Valley.AgroFinance.DTO.ScoreRequestV2;
 import com.Dx_Valley.AgroFinance.Models.Asset;
 import com.Dx_Valley.AgroFinance.Models.AssetWithStatus;
 import com.Dx_Valley.AgroFinance.Models.Education;
@@ -106,4 +107,25 @@ public class CalculateScoreController {
         return ResponseEntity.ok(totalScore);
     }
 
+    @PostMapping("/calculatev2")
+    private ResponseEntity<Long> calculateScorev2(@RequestBody ScoreRequestV2 request) {
+        Double totalScore = 0D;
+        System.out.println("########################## "+request.getLOANAPPLICATIONAMOUNT());
+
+        Long laa = request.getLOANAPPLICATIONAMOUNT();
+        // Long adb = request.getAVERAGEDAILYBALANCE();
+
+        // Double percentage = calculatePercentage((double)adb, (double)laa);
+
+        return ResponseEntity.ok(laa);
+    }
+
+
+    public Double calculatePercentage(Double a, Double b) {
+        if (b == 0) {
+            throw new IllegalArgumentException("B cannot be zero.");
+        }
+        return (a / b) * 100.0;
+    }
+    
 }
