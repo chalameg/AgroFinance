@@ -15,9 +15,9 @@ public class ScoringData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private ScoringDataType scoringDataType;
+    
     private Double rangeStart;
     private Double rangeEnd;
     private Double weight;
-
 }
 

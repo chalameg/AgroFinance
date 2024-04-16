@@ -29,8 +29,14 @@ public class ScoringDataServiceImpl implements ScoringDataService {
     }
 
     @Override
-    public ScoringData createScoringData(ScoringData ScoringData) {
-        return scoringDataRepository.save(ScoringData);
+    public ScoringData createScoringData(ScoringData scoringData) {
+        if (scoringData.getRangeStart() == null) {
+            scoringData.setRangeStart(null);
+        }
+        if (scoringData.getRangeEnd() == null) {
+            scoringData.setRangeEnd(null);
+        }
+        return scoringDataRepository.save(scoringData);
     }
 
     @Override

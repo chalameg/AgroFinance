@@ -8,7 +8,12 @@ public enum ScoringDataType {
     ANNUALFURTUFARMINCOME,
     ACCOUNTAGE,
     FARMINGEXPERIENCE,
-    ASSET;
+    ASSET,
+    ILLITERATE,
+    LITERATE,
+    GOODBEHAVIOUR,
+    MODERATEBEHAVIOUR,
+    BADBEHAVIOUR;
     public static ScoringDataType lookup(String  scoringDataType) {
         return Arrays.stream(ScoringDataType.values())
                 .filter(e -> e.name().equalsIgnoreCase(scoringDataType)).findAny()

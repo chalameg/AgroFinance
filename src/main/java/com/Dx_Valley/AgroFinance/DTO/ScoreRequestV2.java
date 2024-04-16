@@ -24,4 +24,5 @@ public class ScoreRequestV2 {
     private Boolean hasCreditHistory;
     private Boolean hasPaidRegularly;
     private Boolean hasPenalityHistory;
+    private Boolean hasDefaultHistory;
 }
