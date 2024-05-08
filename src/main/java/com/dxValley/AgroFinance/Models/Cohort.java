@@ -2,9 +2,7 @@ package com.dxValley.AgroFinance.Models;
 
 import java.time.LocalDateTime;
 import java.util.*;
-
 import org.hibernate.annotations.*;
-
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import lombok.*;
@@ -76,4 +74,5 @@ public class Cohort {
         for (Education education : educations)
             education.setCohort(null);
     }
+
 }

@@ -4,10 +4,13 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class CohortDTO {
-  
+public class FarmingAndDailyBalanceDTO {
     @NotNull
-    private String name;
+    private Double balanceThreshold;
+    @NotNull
+    private Double minWeight;
     @NotNull
     private String description;
+
+    private Long cohortId;
 }

@@ -7,12 +7,14 @@ import org.springframework.web.bind.annotation.*;
 import com.dxValley.AgroFinance.Models.ScoringData;
 import com.dxValley.AgroFinance.Service.ScoringDataService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/scoringData")
+@Tag(name = "Scoring data APIs.")
 @AllArgsConstructor
 public class ScoringDataController {
 

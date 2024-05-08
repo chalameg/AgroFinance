@@ -10,9 +10,12 @@ import com.dxValley.AgroFinance.DTO.CohortListResponse;
 import com.dxValley.AgroFinance.Models.Cohort;
 import com.dxValley.AgroFinance.Service.CohortService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.List;
 
 @RequestMapping("/api/cohorts")
+@Tag(name = "Cohort APIs.")
 @RestController
 public class CohortController {
 

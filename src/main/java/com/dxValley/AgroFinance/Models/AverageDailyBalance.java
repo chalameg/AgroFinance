@@ -18,11 +18,11 @@ public class AverageDailyBalance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
-    private String rangeStart;
-    private String rangeEnd;
+    private Double balanceThreshold; //this is adb to laa percent
+    private Double minWeight;
     private String description;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "cohortId")
     @JsonIgnore
     private Cohort cohort;

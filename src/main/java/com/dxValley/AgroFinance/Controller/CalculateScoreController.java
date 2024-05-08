@@ -10,10 +10,12 @@ import com.dxValley.AgroFinance.Enums.ScoringDataType;
 import com.dxValley.AgroFinance.Models.ScoringData;
 import com.dxValley.AgroFinance.Service.ScoringDataService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Score calculation APIs.")
 @RequestMapping("/api/score")
 public class CalculateScoreController {
     private final ScoringDataService scoringDataService;

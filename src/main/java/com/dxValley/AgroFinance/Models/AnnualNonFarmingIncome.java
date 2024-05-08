@@ -18,11 +18,11 @@ public class AnnualNonFarmingIncome {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
-    private String rangeStart;
-    private String rangeEnd;
+    private Double balanceThreshold; //this anfi to laa percent
+    private Double minWeight;
     private String description;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "cohortId")
     @JsonIgnore
     private Cohort cohort;

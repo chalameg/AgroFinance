@@ -18,6 +18,7 @@ public class Education {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
+    private String name;
     private String description;
 
     @ManyToOne

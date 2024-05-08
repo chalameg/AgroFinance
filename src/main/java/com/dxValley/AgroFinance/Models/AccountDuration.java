@@ -19,11 +19,12 @@ public class AccountDuration {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
-    private String rangeStart;
-    private String rangeEnd;
+    private Double maxMonth;
+    private Double minMonth;
+    private Double minWeight;
     private String description;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "cohortId")
     @JsonIgnore
     private Cohort cohort;

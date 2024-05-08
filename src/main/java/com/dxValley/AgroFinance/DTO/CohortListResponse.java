@@ -9,6 +9,4 @@ public class CohortListResponse {
     private String name;
 
     private String description;
-
-    private Short maxFacilityTerm;
 }

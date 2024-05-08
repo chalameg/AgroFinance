@@ -18,11 +18,12 @@ public class Asset {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
-    private String rangeStart;
-    private String rangeEnd;
+    private Double balanceThreshold; //this asset to laa percent
+    private Double minBalanceThreshold; //this is min asset to laa percent
+    private Double minWeight;
     private String description;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "cohortId")
     @JsonIgnore
     private Cohort cohort;
