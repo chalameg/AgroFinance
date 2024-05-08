@@ -14,7 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 
 @RequestMapping("/api/annualFurtuFarmingIncomes")
-@Tag(name = "Annual Furtu Farming APIs.")
+@Tag(name = "Annual Furtu Farming Income APIs.")
 @RestController
 public class AnnualFurtuFarmingIncomeController {
 
