@@ -13,7 +13,7 @@ import lombok.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class AnnulFarmingIncome {
+public class AnnualFarmingIncome {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;

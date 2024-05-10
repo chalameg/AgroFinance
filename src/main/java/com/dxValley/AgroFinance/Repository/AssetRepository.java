@@ -1,8 +1,15 @@
 package com.dxValley.AgroFinance.Repository;
 
-import com.dxValley.AgroFinance.Models.Asset;
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
 
-public interface AssetRepository extends JpaRepository<Asset, Long>{
-    
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.dxValley.AgroFinance.Models.Asset;
+
+@Repository
+public interface AssetRepository extends JpaRepository<Asset, Long> {
+    List<Asset> findByCohortId(Long cohortId);
+
+    List<Asset> findByCohortIsNull();
 }

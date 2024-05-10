@@ -27,7 +27,7 @@ public class Cohort {
     private List<AnnualFurtuFarmingIncome> annualFurtuFarmingIncomes = new ArrayList<>();
 
     @OneToMany(mappedBy = "cohort", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<AnnulFarmingIncome> annulFarmingIncomes = new ArrayList<>();
+    private List<AnnualFarmingIncome> annulFarmingIncomes = new ArrayList<>();
 
     @OneToMany(mappedBy = "cohort", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<AnnualNonFarmingIncome> annualNonFarmingIncomes = new ArrayList<>();
@@ -61,7 +61,7 @@ public class Cohort {
         for (AnnualNonFarmingIncome annualNonFarmingIncome : annualNonFarmingIncomes)
             annualNonFarmingIncome.setCohort(null);
 
-        for (AnnulFarmingIncome annulFarmingIncome : annulFarmingIncomes)
+        for (AnnualFarmingIncome annulFarmingIncome : annulFarmingIncomes)
             annulFarmingIncome.setCohort(null);
 
         for (Asset asset : assets)
