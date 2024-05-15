@@ -18,6 +18,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/api/weights")
 @Tag(name = "Weights APIs.")
 @RestController
+@CrossOrigin(origins = {"*"}, maxAge = 3600L)
+
 public class WeightController {
 
     private final WeightService weightService;

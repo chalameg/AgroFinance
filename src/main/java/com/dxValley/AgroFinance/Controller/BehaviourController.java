@@ -16,6 +16,8 @@ import java.util.List;
 @RequestMapping("/api/behaviours")
 @Tag(name = "Farmer Behaviour APIs.")
 @RestController
+@CrossOrigin(origins = {"*"}, maxAge = 3600L)
+
 public class BehaviourController {
 
     private final BehaviourService behaviourService;

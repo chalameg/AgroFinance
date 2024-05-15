@@ -17,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Tag(name = "Score calculation APIs.")
 @RequestMapping("/api/score")
+@CrossOrigin(origins = {"*"}, maxAge = 3600L)
+
 public class CalculateScoreController {
     private final ScoringDataService scoringDataService;
   
