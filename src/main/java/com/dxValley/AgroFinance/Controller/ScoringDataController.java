@@ -16,7 +16,7 @@ import java.util.List;
 @RequestMapping("/api/scoringData")
 @Tag(name = "Scoring data APIs.")
 @AllArgsConstructor
-@CrossOrigin(origins = {"*"}, maxAge = 3600L)
+
 
 public class ScoringDataController {
 

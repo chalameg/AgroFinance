@@ -16,8 +16,6 @@ import java.util.List;
 @RequestMapping("/api/averageDailyBalances")
 @Tag(name = "Average Daily Balance APIs.")
 @RestController
-@CrossOrigin(origins = {"*"}, maxAge = 3600L)
-
 public class AverageDailyBalanceController {
 
     private final AverageDailyBalanceService averageDailyBalanceService;

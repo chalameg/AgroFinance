@@ -20,8 +20,8 @@ public class AnnualFurtuFarmingIncome {
     private Long Id;
 
     private Double balanceThreshold; //this affi to laa percent
+    private Double minBalanceThreshold; //this is min asset to laa percent
     private Double minWeight;
-
     private String description;
 
     @OneToOne

@@ -1,6 +1,6 @@
 package com.dxValley.AgroFinance.Service;
 
-import com.dxValley.AgroFinance.DTO.FarmingAndDailyBalanceDTO;
+import com.dxValley.AgroFinance.DTO.AssetDTO;
 import com.dxValley.AgroFinance.Models.AnnualFurtuFarmingIncome;
 import com.dxValley.AgroFinance.Models.Cohort;
 import com.dxValley.AgroFinance.Repository.AnnualFurtuFarmingIncomeRepository;
@@ -31,24 +31,25 @@ public class AnnualFurtuFarmingIncomeService {
         return annualFurtuFarmingIncomeRepository.findByCohortId(cohortId);
     }
 
-    public AnnualFurtuFarmingIncome createAnnualFurtuFarmingIncome(FarmingAndDailyBalanceDTO farmingAndDailyBalanceDTO) {
+    public AnnualFurtuFarmingIncome createAnnualFurtuFarmingIncome(AssetDTO assetDTO) {
 
-        Long cohortId = farmingAndDailyBalanceDTO.getCohortId();
+        Long cohortId = assetDTO.getCohortId();
         Cohort cohort = cohortId != null ? cohortService.getCohortById(cohortId) : null;
 
         AnnualFurtuFarmingIncome annualFurtuFarmingIncome = new AnnualFurtuFarmingIncome();
         annualFurtuFarmingIncome.setCohort(cohort);
-        annualFurtuFarmingIncome.setBalanceThreshold(farmingAndDailyBalanceDTO.getBalanceThreshold());
-        annualFurtuFarmingIncome.setDescription(farmingAndDailyBalanceDTO.getDescription());
-        annualFurtuFarmingIncome.setMinWeight(farmingAndDailyBalanceDTO.getMinWeight());
+        annualFurtuFarmingIncome.setBalanceThreshold(assetDTO.getBalanceThreshold());
+        annualFurtuFarmingIncome.setDescription(assetDTO.getDescription());
+        annualFurtuFarmingIncome.setMinBalanceThreshold(assetDTO.getMinBalanceThreshold());
+        annualFurtuFarmingIncome.setMinWeight(assetDTO.getMinWeight());
 
         return annualFurtuFarmingIncomeRepository.save(annualFurtuFarmingIncome);
     }
 
-    public AnnualFurtuFarmingIncome updateAnnualFurtuFarmingIncome(Long id, FarmingAndDailyBalanceDTO farmingAndDailyBalanceDTO) {
+    public AnnualFurtuFarmingIncome updateAnnualFurtuFarmingIncome(Long id, AssetDTO assetDTO) {
         AnnualFurtuFarmingIncome annualFurtuFarmingIncome = getAnnualFurtuFarmingIncomeById(id);
         // Copy non-null properties from DTO to Entity
-        BeanUtils.copyProperties(farmingAndDailyBalanceDTO, annualFurtuFarmingIncome, ObjectPropertyUtils.getNullPropertyNames(farmingAndDailyBalanceDTO));
+        BeanUtils.copyProperties(assetDTO, annualFurtuFarmingIncome, ObjectPropertyUtils.getNullPropertyNames(assetDTO));
         return annualFurtuFarmingIncomeRepository.save(annualFurtuFarmingIncome);
     }
 

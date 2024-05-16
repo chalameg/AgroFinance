@@ -16,8 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping("api/v1/Farmer-data")
 @Tag(name = "Farmer Data APIs.")
-@CrossOrigin(origins = {"*"}, maxAge = 3600L)
-
 public class FarmerDataController {
     @Autowired
     private FarmerDataRepository farmerDataRepository;

@@ -16,8 +16,6 @@ import java.util.List;
 @RequestMapping("/api/educations")
 @Tag(name = "Farmer Education APIs.")
 @RestController
-@CrossOrigin(origins = {"*"}, maxAge = 3600L)
-
 public class EducationController {
 
     private final EducationService educationService;
