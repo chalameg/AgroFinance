@@ -2,6 +2,12 @@ package com.dxValley.AgroFinance.Controller;
 
 import java.util.List;
 
+import com.dxValley.AgroFinance.Models.FarmerData;
+import com.dxValley.AgroFinance.Models.Score;
+import com.dxValley.AgroFinance.Repository.FarmerDataRepository;
+import com.dxValley.AgroFinance.Service.FarmerDataService;
+import com.dxValley.AgroFinance.Service.ScoreService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +27,9 @@ import lombok.RequiredArgsConstructor;
 
 public class CalculateScoreController {
     private final ScoringDataService scoringDataService;
+    private  final ScoreService scoreService;
+    private final FarmerDataService farmerDataService;
+    private  final FarmerDataRepository farmerDataRepository;
   
     @PostMapping("/calculatev2")
     public ResponseEntity<Double> calculateScorev2(@RequestBody ScoreRequestV2 request) {
@@ -46,11 +55,20 @@ public class CalculateScoreController {
             }else{
                 totalScore += calculateScoreForYesNoType(ScoringDataType.BADBEHAVIOUR);
             }
+
         }else{
             totalScore += calculateScoreForYesNoType(ScoringDataType.BADBEHAVIOUR);
         }
 
-        return ResponseEntity.ok(totalScore);
+        Score score1 = new Score();
+        score1.setScore(totalScore);
+
+//        FarmerData farmerData = farmerDataService.
+//        score1.setFarmerData(farmerData);
+
+        scoreService.createScore(score1);
+
+        return new ResponseEntity<>(totalScore, HttpStatus.OK);
     }
 
     private Double calculateScoreForType(ScoringDataType type, Double value, Double laa) {
