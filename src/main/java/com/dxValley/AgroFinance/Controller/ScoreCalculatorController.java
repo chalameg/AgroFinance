@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Tag(name = "Score calculation APIs.")
 @RequestMapping("/api/score")
-public class CalculateScoreController {
+public class ScoreCalculatorController {
     private final ScoringDataService scoringDataService;
   
     @PostMapping("/calculatev2")
