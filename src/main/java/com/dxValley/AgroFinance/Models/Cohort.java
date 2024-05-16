@@ -2,7 +2,11 @@ package com.dxValley.AgroFinance.Models;
 
 import java.time.LocalDateTime;
 import java.util.*;
+
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.*;
+import org.hibernate.collection.spi.PersistentCollection;
+
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import lombok.*;
@@ -27,7 +31,7 @@ public class Cohort {
     private List<AnnualFurtuFarmingIncome> annualFurtuFarmingIncomes = new ArrayList<>();
 
     @OneToMany(mappedBy = "cohort", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<AnnualFarmingIncome> annulFarmingIncomes = new ArrayList<>();
+    private List<AnnualFarmingIncome> annualFarmingIncomes = new ArrayList<>();
 
     @OneToMany(mappedBy = "cohort", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<AnnualNonFarmingIncome> annualNonFarmingIncomes = new ArrayList<>();
@@ -43,6 +47,9 @@ public class Cohort {
 
     @OneToMany(mappedBy = "cohort", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Education> educations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "cohort", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<FarmingExprience> farmingExpriences = new ArrayList<>();
 
     @CreationTimestamp
     private LocalDateTime createdDate;
@@ -61,7 +68,7 @@ public class Cohort {
         for (AnnualNonFarmingIncome annualNonFarmingIncome : annualNonFarmingIncomes)
             annualNonFarmingIncome.setCohort(null);
 
-        for (AnnualFarmingIncome annulFarmingIncome : annulFarmingIncomes)
+        for (AnnualFarmingIncome annulFarmingIncome : annualFarmingIncomes)
             annulFarmingIncome.setCohort(null);
 
         for (Asset asset : assets)
@@ -73,6 +80,36 @@ public class Cohort {
             behaviour.setCohort(null);
         for (Education education : educations)
             education.setCohort(null);
+    }
+
+    @Override
+    public String toString() {
+        return "Cohort{" +
+                "Id=" + Id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", accountDurations=" + safeToString(accountDurations) +
+                ", annualFurtuFarmingIncomes=" + safeToString(annualFurtuFarmingIncomes) +
+                ", annulFarmingIncomes=" + safeToString(annualFarmingIncomes) +
+                ", annualNonFarmingIncomes=" + safeToString(annualNonFarmingIncomes) +
+                ", assets=" + safeToString(assets) +
+                ", averageDailyBalances=" + safeToString(averageDailyBalances) +
+                ", behaviours=" + safeToString(behaviours) +
+                ", educations=" + safeToString(educations) +
+                ", farmingExpriences=" + safeToString(farmingExpriences) +
+                ", createdDate=" + createdDate +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
+
+    private String safeToString(Collection<?> collection) {
+        if (collection == null) {
+            return "null";
+        }
+        if (collection instanceof PersistentCollection && !Hibernate.isInitialized(collection)) {
+            return "Uninitialized PersistentCollection";
+        }
+        return collection.toString();
     }
 
 }

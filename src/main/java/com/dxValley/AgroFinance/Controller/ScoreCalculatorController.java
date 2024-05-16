@@ -7,8 +7,11 @@ import org.springframework.web.bind.annotation.*;
 
 import com.dxValley.AgroFinance.DTO.ScoreRequestV2;
 import com.dxValley.AgroFinance.Enums.ScoringDataType;
+import com.dxValley.AgroFinance.Models.Cohort;
 import com.dxValley.AgroFinance.Models.ScoringData;
+import com.dxValley.AgroFinance.Service.CohortService;
 import com.dxValley.AgroFinance.Service.ScoringDataService;
+import com.dxValley.AgroFinance.Service.WeightService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +22,8 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/score")
 public class ScoreCalculatorController {
     private final ScoringDataService scoringDataService;
+    private final CohortService cohortService; 
+    private final WeightService weightService;
   
     @PostMapping("/calculatev2")
     public ResponseEntity<Double> calculateScorev2(@RequestBody ScoreRequestV2 request) {
@@ -26,13 +31,13 @@ public class ScoreCalculatorController {
         Double laa = request.getLoanApplicationAmount();
 
         totalScore += calculateScoreForType(ScoringDataType.AVERAGEDAILYBALANCE, request.getAverageDailyBalance(), laa);
-        totalScore += calculateScoreForType(ScoringDataType.ANNUALFARMINCOME, request.getAnnualFarmIncome(), laa);
-        totalScore += calculateScoreForType(ScoringDataType.ANNUALNONFARMINCOME, request.getAnnualNonFarmIncome(), laa);
+        totalScore += calculateScoreForType(ScoringDataType.ANNUALFARMINGINCOME, request.getAnnualFarmingIncome(), laa);
+        totalScore += calculateScoreForType(ScoringDataType.ANNUALNONFARMINGINCOME, request.getAnnualNonFarmingIncome(), laa);
         // no need of laa for farming exprience and account age
         totalScore += calculateScoreForType(ScoringDataType.FARMINGEXPERIENCE, request.getFarmingExperience(), laa); 
         totalScore += calculateScoreForType(ScoringDataType.ACCOUNTAGE, request.getAccountAge(), laa);
 
-        totalScore += calculateScoreForType(ScoringDataType.ANNUALFURTUFARMINCOME, request.getAnnualFurtuFarmIncome(), laa);
+        totalScore += calculateScoreForType(ScoringDataType.ANNUALFURTUFARMINGINCOME, request.getAnnualFurtuFarmingIncome(), laa);
         totalScore += calculateScoreForType(ScoringDataType.ASSET, request.getAsset(), laa);
         totalScore += request.getIsLiterate() ? calculateScoreForYesNoType(ScoringDataType.LITERATE) : calculateScoreForYesNoType(ScoringDataType.ILLITERATE);
         
@@ -88,4 +93,79 @@ public class ScoreCalculatorController {
         return (a / b) * 100.0;
     }
     
+
+    @PostMapping("/calculate/{cohortId}")
+    public ResponseEntity<Double> calculateScore(@RequestBody ScoreRequestV2 request, @PathVariable Long cohortId) {
+        var laa = request.getLoanApplicationAmount();
+        Double score = 0D;
+
+        Cohort cohort = cohortService.getCohortById(cohortId);
+
+         // Calculate score for Average Daily Balance
+         if(cohort.getAverageDailyBalances().size() > 0){
+             score += calculateComponentScore(
+                 request.getAverageDailyBalance(),
+                 laa,
+                 cohort.getAverageDailyBalances().get(0).getBalanceThreshold(),
+                 cohort.getAverageDailyBalances().get(0).getMinWeight(),
+                 weightService.getWeight(ScoringDataType.AVERAGEDAILYBALANCE).getWeight()
+             );
+         }
+
+
+        // Calculate score for Annual Farming Income
+        if(cohort.getAnnualFarmingIncomes().size() > 0){
+            score += calculateComponentScore(
+                request.getAnnualFarmingIncome(),
+                laa,
+                cohort.getAnnualFarmingIncomes().get(0).getBalanceThreshold(),
+                cohort.getAnnualFarmingIncomes().get(0).getMinWeight(),
+                weightService.getWeight(ScoringDataType.ANNUALFARMINGINCOME).getWeight()
+            );
+        }
+
+        // Calculate score for Annual Non Farming Income
+        if(cohort.getAnnualNonFarmingIncomes().size() > 0){
+            score += calculateComponentScore(
+                request.getAnnualNonFarmingIncome(),
+                laa,
+                cohort.getAnnualNonFarmingIncomes().get(0).getBalanceThreshold(),
+                cohort.getAnnualNonFarmingIncomes().get(0).getMinWeight(),
+                weightService.getWeight(ScoringDataType.ANNUALNONFARMINGINCOME).getWeight()
+            );
+        }
+
+         // Calculate score for Annual Furtu Farming Income
+         if(cohort.getAnnualFurtuFarmingIncomes().size() > 0){
+            score += calculateComponentScore(
+                request.getAnnualFurtuFarmingIncome(),
+                laa,
+                cohort.getAnnualFurtuFarmingIncomes().get(0).getBalanceThreshold(),
+                cohort.getAnnualFurtuFarmingIncomes().get(0).getMinWeight(),
+                weightService.getWeight(ScoringDataType.ANNUALFURTUFARMINGINCOME).getWeight()
+            );
+        }
+
+        return ResponseEntity.ok(score);
+    }
+
+    
+    public Double calculateComponentScore(
+        Double value,
+        Double laa,
+        Double balanceThreshold,
+        Double minWeight,
+        Double weight
+    ) {
+        Double valueToLaa = calculatePercentage(value, laa);
+        if (valueToLaa > balanceThreshold) {
+            return weight;
+        } else {
+            Double calculatedWeight = (weight * valueToLaa) / balanceThreshold;
+            return Math.max(calculatedWeight, minWeight);
+        }
+    }
 }
+
+
+

@@ -29,20 +29,20 @@ public class OpenApiConfig {
                                 .name("CoopBank")
                                 .url("https://coopbankoromia.com.et/")
                         )
-                )
-                .addSecurityItem(new SecurityRequirement().addList("bearer-jwt", Arrays.asList("read", "write")))
-                .components(new Components()
-                        .addSecuritySchemes("bearer-jwt", new SecurityScheme()
-                                .type(SecurityScheme.Type.HTTP)
-                                .scheme("bearer")
-                                .bearerFormat("JWT")
-                                .in(SecurityScheme.In.HEADER)
-                                .name("Authorization")
-                        )
-                )
-                .servers(Collections.singletonList(
-                        new Server()
-                                .description("Local Test Server")
-                ));
+                );
+                // .addSecurityItem(new SecurityRequirement().addList("bearer-jwt", Arrays.asList("read", "write")))
+                // .components(new Components()
+                //         .addSecuritySchemes("bearer-jwt", new SecurityScheme()
+                //                 .type(SecurityScheme.Type.HTTP)
+                //                 .scheme("bearer")
+                //                 .bearerFormat("JWT")
+                //                 .in(SecurityScheme.In.HEADER)
+                //                 .name("Authorization")
+                //         )
+                // )
+                // .servers(Collections.singletonList(
+                //         new Server()
+                //                 .description("Local Test Server")
+                // ));
     }
 }
