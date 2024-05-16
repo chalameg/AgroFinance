@@ -1,6 +1,7 @@
 package com.dxValley.AgroFinance.Controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,12 +11,14 @@ import com.dxValley.AgroFinance.Models.AccountDuration;
 import com.dxValley.AgroFinance.Service.AccountDurationService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 @RequestMapping("/api/accountDurations")
 @Tag(name = "Account Duration APIs.")
 @RestController
+@CrossOrigin(origins = {"*"}, maxAge = 3600L)
 public class AccountDurationController {
 
     private final AccountDurationService accountDurationService;

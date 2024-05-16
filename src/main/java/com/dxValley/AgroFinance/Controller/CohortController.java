@@ -17,6 +17,8 @@ import java.util.List;
 @RequestMapping("/api/cohorts")
 @Tag(name = "Cohort APIs.")
 @RestController
+@CrossOrigin(origins = {"*"}, maxAge = 3600L)
+
 public class CohortController {
 
     private final CohortService cohortService;

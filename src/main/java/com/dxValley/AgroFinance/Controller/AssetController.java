@@ -16,6 +16,8 @@ import java.util.List;
 @RequestMapping("/api/assets")
 @Tag(name = "Farmer Asset APIs.")
 @RestController
+@CrossOrigin(origins = {"*"}, maxAge = 3600L)
+
 public class AssetController {
 
     private final AssetService assetService;

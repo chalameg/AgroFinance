@@ -16,6 +16,8 @@ import java.util.List;
 @RequestMapping("/api/annualFarmingIncomes")
 @Tag(name = "Annual Farming Income APIs.")
 @RestController
+@CrossOrigin(origins = {"*"}, maxAge = 3600L)
+
 public class AnnualFarmingIncomeController {
 
     private final AnnualFarmingIncomeService annualFarmingIncomeService;
