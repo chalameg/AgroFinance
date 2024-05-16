@@ -18,7 +18,6 @@ import java.util.List;
 @RequestMapping("/api/accountDurations")
 @Tag(name = "Account Duration APIs.")
 @RestController
-@CrossOrigin(origins = {"*"}, maxAge = 3600L)
 public class AccountDurationController {
 
     private final AccountDurationService accountDurationService;

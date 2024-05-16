@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Tag(name = "Score calculation APIs.")
 @RequestMapping("/api/score")
-@CrossOrigin(origins = {"*"}, maxAge = 3600L)
 public class ScoreCalculatorController {
     private final ScoringDataService scoringDataService;
     private final CohortService cohortService; 
@@ -94,7 +93,6 @@ public class ScoreCalculatorController {
         return (a / b) * 100.0;
     }
     
-
     @PostMapping("/calculate/{cohortId}")
     public ResponseEntity<Double> calculateScore(@RequestBody ScoreRequestV2 request, @PathVariable Long cohortId) {
         var laa = request.getLoanApplicationAmount();
@@ -138,19 +136,33 @@ public class ScoreCalculatorController {
 
          // Calculate score for Annual Furtu Farming Income
          if(cohort.getAnnualFurtuFarmingIncomes().size() > 0){
-            score += calculateComponentScore(
+            score += calculateAssetOrFurtuScore(
                 request.getAnnualFurtuFarmingIncome(),
                 laa,
                 cohort.getAnnualFurtuFarmingIncomes().get(0).getBalanceThreshold(),
+                cohort.getAnnualFurtuFarmingIncomes().get(0).getMinBalanceThreshold(),
                 cohort.getAnnualFurtuFarmingIncomes().get(0).getMinWeight(),
                 weightService.getWeight(ScoringDataType.ANNUALFURTUFARMINGINCOME).getWeight()
             );
         }
 
+         // Calculate score for Asset Income
+         if(cohort.getAssets().size() > 0){
+            score += calculateAssetOrFurtuScore(
+                request.getAsset(),
+                laa,
+                cohort.getAssets().get(0).getBalanceThreshold(),
+                cohort.getAssets().get(0).getMinBalanceThreshold(),
+                cohort.getAssets().get(0).getMinWeight(),
+                weightService.getWeight(ScoringDataType.ASSET).getWeight()
+            );
+        }
+
+
+        // 
         return ResponseEntity.ok(score);
     }
 
-    
     public Double calculateComponentScore(
         Double value,
         Double laa,
@@ -166,6 +178,45 @@ public class ScoreCalculatorController {
             return Math.max(calculatedWeight, minWeight);
         }
     }
+
+    public Double calculateAssetOrFurtuScore(
+        Double value,
+        Double laa,
+        Double balanceThreshold,
+        Double minBalanceThreshold,
+        Double minWeight,
+        Double weight
+    ) {
+        Double valueToLaa = calculatePercentage(value, laa);
+        if(valueToLaa < minBalanceThreshold){
+            return 0D;
+        }
+        else if (valueToLaa > balanceThreshold) {
+            return weight;
+        }
+        else {
+            Double calculatedWeight = (weight * valueToLaa) / balanceThreshold;
+            return Math.max(calculatedWeight, minWeight);
+        }
+    }
+
+    public Double calculateAccountAndExprienceScore(
+        Double value,
+        Double maxMonth,
+        Double minMonth,
+        Double minWeight,
+        Double weight
+    ) {
+        if (value > maxMonth) {
+            return weight;
+        }
+        else {
+            Double calculatedWeight = (weight * value) / maxMonth;
+            return Math.max(calculatedWeight, minWeight);
+        }
+    }
+
+
 }
 
 

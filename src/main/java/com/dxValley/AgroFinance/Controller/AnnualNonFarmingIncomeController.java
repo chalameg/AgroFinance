@@ -14,10 +14,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 
 @RequestMapping("/api/annualNonFarmingIncomes")
-@Tag(name = "Annual Furtu Non Farming Inocme APIs.")
+@Tag(name = "Annual Non Farming Inocme APIs.")
 @RestController
-@CrossOrigin(origins = {"*"}, maxAge = 3600L)
-
 public class AnnualNonFarmingIncomeController {
 
     private final AnnualNonFarmingIncomeService annualNonFarmingIncomeService;

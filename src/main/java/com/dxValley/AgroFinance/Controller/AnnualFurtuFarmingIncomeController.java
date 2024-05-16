@@ -5,7 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.dxValley.AgroFinance.DTO.FarmingAndDailyBalanceDTO;
+import com.dxValley.AgroFinance.DTO.AssetDTO;
 import com.dxValley.AgroFinance.Models.AnnualFurtuFarmingIncome;
 import com.dxValley.AgroFinance.Service.AnnualFurtuFarmingIncomeService;
 
@@ -16,8 +16,6 @@ import java.util.List;
 @RequestMapping("/api/annualFurtuFarmingIncomes")
 @Tag(name = "Annual Furtu Farming Income APIs.")
 @RestController
-@CrossOrigin(origins = {"*"}, maxAge = 3600L)
-
 public class AnnualFurtuFarmingIncomeController {
 
     private final AnnualFurtuFarmingIncomeService annualFurtuFarmingIncomeService;
@@ -40,14 +38,14 @@ public class AnnualFurtuFarmingIncomeController {
     }
 
     @PostMapping
-    public ResponseEntity<AnnualFurtuFarmingIncome> createAnnualFurtuFarmingIncome(@RequestBody @Valid FarmingAndDailyBalanceDTO farmingAndDailyBalanceDTO) {
-        AnnualFurtuFarmingIncome createdAnnualFurtuFarmingIncome = annualFurtuFarmingIncomeService.createAnnualFurtuFarmingIncome(farmingAndDailyBalanceDTO);
+    public ResponseEntity<AnnualFurtuFarmingIncome> createAnnualFurtuFarmingIncome(@RequestBody @Valid AssetDTO assetDTO) {
+        AnnualFurtuFarmingIncome createdAnnualFurtuFarmingIncome = annualFurtuFarmingIncomeService.createAnnualFurtuFarmingIncome(assetDTO);
         return ResponseEntity.ok(createdAnnualFurtuFarmingIncome);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AnnualFurtuFarmingIncome> updateAnnualFurtuFarmingIncome(@PathVariable Long id, @RequestBody FarmingAndDailyBalanceDTO farmingAndDailyBalanceDTO) {
-        AnnualFurtuFarmingIncome AnnualFurtuFarmingIncome = annualFurtuFarmingIncomeService.updateAnnualFurtuFarmingIncome(id, farmingAndDailyBalanceDTO);
+    public ResponseEntity<AnnualFurtuFarmingIncome> updateAnnualFurtuFarmingIncome(@PathVariable Long id, @RequestBody AssetDTO assetDTO) {
+        AnnualFurtuFarmingIncome AnnualFurtuFarmingIncome = annualFurtuFarmingIncomeService.updateAnnualFurtuFarmingIncome(id, assetDTO);
         return ResponseEntity.ok(AnnualFurtuFarmingIncome);
     }
 
