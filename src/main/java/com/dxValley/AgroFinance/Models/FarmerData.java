@@ -10,16 +10,15 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FarmerData {
-
-    @jakarta.persistence.Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
-
+    private  Long farmerAccount;
     private Double loanApplicationAmount;
     private Double averageDailyBalance;
-    private Double annualFarmIncome;
-    private Double annualNonFarmIncome;
-    private Double annualFurtuFarmIncome;
+    private Double annualFurtuFarminIncome;
+    private Double annualNonFarmingIncome;
+    private Double annualFarmingIncome;
     private Double accountAge;
     private Double farmingExperience;
     private Double asset;
@@ -29,19 +28,20 @@ public class FarmerData {
     private Boolean hasPenalityHistory;
     private Boolean hasDefaultHistory;
 
-    //relate to user model or from other end point get from farmer information
+    //relate to user by userAccount or from other end point get from farmer information
 
 
-    public FarmerData(Double loanApplicationAmount, Double averageDailyBalance, Double accountAge,Double annualFarmIncome, Double annualFurtuFarmingIncome, double annualNonFarmingIncome,
+    public FarmerData(Double loanApplicationAmount,Long farmerAccount, Double averageDailyBalance, Double accountAge,Double annualFarmingIncome, Double annualFurtuFarmingIncome, double annualNonFarmingIncome,
                       double asset, double farmingExperience, boolean isLiterate, boolean hasCreditHistory,
                       boolean hasDefaultHistory, boolean hasPaidRegularly, boolean hasPenalityHistory
                       ){
         this.loanApplicationAmount= loanApplicationAmount;
+        this.farmerAccount=farmerAccount;
         this.averageDailyBalance=averageDailyBalance;
         this.accountAge =accountAge;
-        this.annualFarmIncome=annualFarmIncome;
-        this.annualFurtuFarmIncome=annualFurtuFarmingIncome;
-        this.annualNonFarmIncome=annualNonFarmingIncome;
+        this.annualFarmingIncome=annualFarmingIncome;
+        this.annualFurtuFarminIncome=annualFurtuFarmingIncome;
+        this.annualNonFarmingIncome=annualNonFarmingIncome;
         this.asset=asset;
         this.farmingExperience=farmingExperience;
         this.isLiterate=isLiterate;

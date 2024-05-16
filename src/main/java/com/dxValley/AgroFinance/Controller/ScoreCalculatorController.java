@@ -2,6 +2,9 @@ package com.dxValley.AgroFinance.Controller;
 
 import java.util.List;
 
+import com.dxValley.AgroFinance.Models.DecisionRule;
+import com.dxValley.AgroFinance.Models.Score;
+import com.dxValley.AgroFinance.Service.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,9 +12,6 @@ import com.dxValley.AgroFinance.DTO.ScoreRequestV2;
 import com.dxValley.AgroFinance.Enums.ScoringDataType;
 import com.dxValley.AgroFinance.Models.Cohort;
 import com.dxValley.AgroFinance.Models.ScoringData;
-import com.dxValley.AgroFinance.Service.CohortService;
-import com.dxValley.AgroFinance.Service.ScoringDataService;
-import com.dxValley.AgroFinance.Service.WeightService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,9 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/score")
 public class ScoreCalculatorController {
     private final ScoringDataService scoringDataService;
-    private final CohortService cohortService; 
+    private final CohortService cohortService;
+    private  final DecisionRuleService decisionRuleService;
+    private final  ScoreService scoreService;
     private final WeightService weightService;
   
     @PostMapping("/calculatev2")
@@ -52,9 +54,45 @@ public class ScoreCalculatorController {
         }else{
             totalScore += calculateScoreForYesNoType(ScoringDataType.BADBEHAVIOUR);
         }
+        Score score1 = new Score();
+        score1.setScore(totalScore);
+        scoreService.createScore(score1);
+
+
+        String[] result = getScoreAndDescription(totalScore);
+        System.out.println("Score: " + totalScore + ", AmountDecided: " + result[0] + ", Description: " + result[1]+ ", Standard: " + result[2]);
+
 
         return ResponseEntity.ok(totalScore);
     }
+
+//    private  double scoreResult(double score12){
+//        List<DecisionRule> decisionRuleList = decisionRuleService.getAllDecisionRule();
+//
+//        for (DecisionRule range : decisionRuleList) {
+//            if (range.getStartValue() <= score12 && score12 <= range.getEndValue()) {
+//                return range.getAmountDecided();
+//            };
+//            }
+////
+//        return  0.0;
+//
+//    }
+
+    public  String[] getScoreAndDescription(double value) {
+         List<DecisionRule> decisionRuleList = decisionRuleService.getAllDecisionRule();
+
+        for (DecisionRule range : decisionRuleList) {
+            if (range.getStartValue() <= value && value <= range.getEndValue()) {
+                return new String[]{String.valueOf(range.getAmountDecided()), range.getDescription(), range.getStandard()};
+            }
+        }
+        return new String[]{null, "Out of Range"};
+    }
+
+
+
+
 
     private Double calculateScoreForType(ScoringDataType type, Double value, Double laa) {
         List<ScoringData> scoringDataList = scoringDataService.getScoringDataByType(type);

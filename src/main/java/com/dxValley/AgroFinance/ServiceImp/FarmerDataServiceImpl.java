@@ -36,9 +36,9 @@ public class FarmerDataServiceImpl implements FarmerDataService {
             farmerData1.setLoanApplicationAmount(farmerData.getLoanApplicationAmount());
             farmerData1.setAverageDailyBalance(farmerData.getAverageDailyBalance());
             farmerData1.setAccountAge(farmerData.getAccountAge());
-            farmerData1.setAnnualFarmIncome(farmerData.getAnnualFarmIncome());
-            farmerData1.setAnnualNonFarmIncome(farmerData.getAnnualNonFarmIncome());
-            farmerData1.setAnnualFarmIncome(farmerData.getAnnualFarmIncome());
+            farmerData1.setAnnualFarmingIncome(farmerData.getAnnualFarmingIncome());
+            farmerData1.setAnnualNonFarmingIncome(farmerData.getAnnualNonFarmingIncome());
+            farmerData1.setAnnualFurtuFarminIncome(farmerData.getAnnualFurtuFarminIncome());
             farmerData1.setFarmingExperience(farmerData.getFarmingExperience());
 
             farmerData1.setAsset(farmerData.getAsset());
