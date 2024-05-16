@@ -9,5 +9,5 @@ public class WeightDTO {
     @NotNull
     private ScoringDataType scoringDataType;
     @NotNull
-    private Long weight;
+    private Double weight;
 }

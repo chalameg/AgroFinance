@@ -39,6 +39,7 @@ public class AssetService {
         Asset asset = new Asset();
         asset.setCohort(cohort);
         asset.setBalanceThreshold(assetDTO.getBalanceThreshold());
+        asset.setMinBalanceThreshold(assetDTO.getMinBalanceThreshold());
         asset.setDescription(assetDTO.getDescription());
         asset.setMinWeight(assetDTO.getMinWeight());
 

@@ -16,5 +16,5 @@ public class Weight {
 
     private ScoringDataType scoringDataType;
 
-    private Long weight;
+    private Double weight;
 }

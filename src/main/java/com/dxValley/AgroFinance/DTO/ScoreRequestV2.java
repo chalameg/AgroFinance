@@ -14,9 +14,9 @@ import lombok.ToString;
 public class ScoreRequestV2 {
     private Double loanApplicationAmount;
     private Double averageDailyBalance;
-    private Double annualFarmIncome;
-    private Double annualNonFarmIncome;
-    private Double annualFurtuFarmIncome;
+    private Double annualFarmingIncome;
+    private Double annualNonFarmingIncome;
+    private Double annualFurtuFarmingIncome;
     private Double accountAge;
     private Double farmingExperience;
     private Double asset;
