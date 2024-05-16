@@ -19,13 +19,13 @@ import java.util.List;
 public class ScoreController {
     @Autowired
     private ScoreService scoreService;
-//    @PostMapping
-//    public ResponseEntity<Double> createScore(@RequestBody Score score){
-//        double score1 = scoreService.createScore(score);
-//
-//        return
-//
-//    }
+    @PostMapping
+    public ResponseEntity<Score> createScore(@RequestBody Score score){
+        Score  score1 = scoreService.createScore(score);
+//        System.out.println("ghhhhhhhhhhhhhhhhhhhh"+ score1);
+        return new ResponseEntity<>(score1, HttpStatus.OK);
+
+    }
     @GetMapping
     public ResponseEntity<List<Score>>getAllScore(){
 

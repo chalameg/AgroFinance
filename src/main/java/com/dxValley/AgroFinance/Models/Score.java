@@ -21,10 +21,11 @@ public class Score {
 
     //relate to user by userAccount or from other end point get from farmer information
 
-    @OneToMany(mappedBy = "farmerAccount", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<FarmerData> farmerData = new ArrayList<>();
+//    @OneToMany(mappedBy = "farmerAccount", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+//    private List<FarmerData> farmerData = new ArrayList<>();
 
-
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<FarmerData> farmerData;
 
     public Score(double score){
 

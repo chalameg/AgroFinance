@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 @Service
 @AllArgsConstructor
-public class ScoreServivceImpl implements ScoreService {
+public class ScoreServiceImpl implements ScoreService {
     private  final ScoreRepository scoreRepository;
     
     @Override
