@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@Data
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,14 +16,23 @@ public class Score {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
     private double score;
+    private  Long cohortId;
+    private  Long farmerAccount;
+    private Double loanApplicationAmount;
+    private Double averageDailyBalance;
+    private Double annualFurtuFarmingIncome;
+    private Double annualNonFarmingIncome;
+    private Double annualFarmingIncome;
+    private Double accountAge;
+    private Double farmingExperience;
+    private Double asset;
+    private Boolean isLiterate;
+    private Boolean hasCreditHistory;
+    private Boolean hasPaidRegularly;
+    private Boolean hasPenalityHistory;
+    private Boolean hasDefaultHistory;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<FarmerData> farmerData;
 
-    public Score(double score) {
 
-        this.score = score;
-
-    }
 
 }

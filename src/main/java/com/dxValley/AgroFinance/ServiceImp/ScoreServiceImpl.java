@@ -32,7 +32,6 @@ public class ScoreServiceImpl implements ScoreService {
         Score score1 = scoreRepository.findById(id).orElse(null);
         if(score1==null){
             return  null;
-            
         }
         
         else{
