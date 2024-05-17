@@ -54,40 +54,31 @@ public class ScoreCalculatorController {
         }else{
             totalScore += calculateScoreForYesNoType(ScoringDataType.BADBEHAVIOUR);
         }
+        totalScore+=12;
+
         Score score1 = new Score();
         score1.setScore(totalScore);
+
+
         scoreService.createScore(score1);
 
-
-        String[] result = getScoreAndDescription(totalScore);
-        System.out.println("Score: " + totalScore + ", AmountDecided: " + result[0] + ", Description: " + result[1]+ ", Standard: " + result[2]);
-
+        DecisionRule decisionRule = getScoreAndDescription(totalScore);
+        System.out.println("######################################################## Score: " + totalScore + ", AmountDecided: " + decisionRule.getAmountDecided() + ", Description: " +decisionRule.getDescription()+ ", Standard: " + decisionRule.getStandard());
 
         return ResponseEntity.ok(totalScore);
     }
 
-//    private  double scoreResult(double score12){
-//        List<DecisionRule> decisionRuleList = decisionRuleService.getAllDecisionRule();
-//
-//        for (DecisionRule range : decisionRuleList) {
-//            if (range.getStartValue() <= score12 && score12 <= range.getEndValue()) {
-//                return range.getAmountDecided();
-//            };
-//            }
-////
-//        return  0.0;
-//
-//    }
-
-    public  String[] getScoreAndDescription(double value) {
+    public  DecisionRule getScoreAndDescription(double value) {
          List<DecisionRule> decisionRuleList = decisionRuleService.getAllDecisionRule();
-
+         DecisionRule decisionRule = new DecisionRule();
         for (DecisionRule range : decisionRuleList) {
             if (range.getStartValue() <= value && value <= range.getEndValue()) {
-                return new String[]{String.valueOf(range.getAmountDecided()), range.getDescription(), range.getStandard()};
+                decisionRule.setDescription(range.getDescription());
+                decisionRule.setAmountDecided(range.getAmountDecided());
+                decisionRule.setStandard(range.getStandard());
             }
         }
-        return new String[]{null, "Out of Range"};
+        return decisionRule;
     }
 
     private Double calculateScoreForType(ScoringDataType type, Double value, Double laa) {
