@@ -16,8 +16,6 @@ import java.util.List;
 @RequestMapping("/api/scoringData")
 @Tag(name = "Scoring data APIs.")
 @AllArgsConstructor
-
-
 public class ScoringDataController {
 
     private final ScoringDataService scoringDataService;

@@ -90,10 +90,6 @@ public class ScoreCalculatorController {
         return new String[]{null, "Out of Range"};
     }
 
-
-
-
-
     private Double calculateScoreForType(ScoringDataType type, Double value, Double laa) {
         List<ScoringData> scoringDataList = scoringDataService.getScoringDataByType(type);
         Double percentage;
@@ -122,7 +118,6 @@ public class ScoreCalculatorController {
         }
         return score;
     }
-
 
     public Double calculatePercentage(Double a, Double b) {
         if (b == 0) {
@@ -184,7 +179,7 @@ public class ScoreCalculatorController {
             );
         }
 
-         // Calculate score for Asset Income
+         // Calculate score for Asset
          if(cohort.getAssets().size() > 0){
             score += calculateAssetOrFurtuScore(
                 request.getAsset(),
@@ -196,8 +191,60 @@ public class ScoreCalculatorController {
             );
         }
 
+        // Calculate score for account duration
+        if(cohort.getAccountDurations().size() > 0){
+            score += calculateAccountAndExprienceScore(
+                request.getAccountAge(),
+                cohort.getAccountDurations().get(0).getMaxMonth(),
+                cohort.getAccountDurations().get(0).getMinMonth(),
+                cohort.getAccountDurations().get(0).getMinWeight(),
+                weightService.getWeight(ScoringDataType.ACCOUNTAGE).getWeight()
+            );
+        }
 
-        // 
+        // Calculate score for farming exprience
+        if(cohort.getFarmingExpriences().size() > 0){
+            score += calculateAccountAndExprienceScore(
+                request.getFarmingExperience(),
+                cohort.getFarmingExpriences().get(0).getMaxMonth(),
+                cohort.getFarmingExpriences().get(0).getMinMonth(),
+                cohort.getFarmingExpriences().get(0).getMinWeight(),
+                weightService.getWeight(ScoringDataType.ACCOUNTAGE).getWeight()
+            );
+        }
+
+        // education
+        if(request.getIsLiterate()){
+            score+=weightService.getWeight(ScoringDataType.LITERATE).getWeight();
+        }else{
+            score+=weightService.getWeight(ScoringDataType.LITERATE).getWeight();
+        }
+
+
+        // behaivor
+        if(request.getHasCreditHistory() & request.getHasPaidRegularly()){
+            if(!request.getHasDefaultHistory() & !request.getHasPenalityHistory()){
+                score += weightService.getWeight(ScoringDataType.GOODBEHAVIOUR).getWeight();
+            }else if(!request.getHasDefaultHistory() & request.getHasPenalityHistory()){
+                score += weightService.getWeight(ScoringDataType.MODERATEBEHAVIOUR).getWeight();
+            }else{
+                score += weightService.getWeight(ScoringDataType.BADBEHAVIOUR).getWeight();
+            }
+        }else{
+            score += weightService.getWeight(ScoringDataType.BADBEHAVIOUR).getWeight();
+        }
+
+
+        // Score score1 = new Score();
+        // score1.setScore((double)score);
+        // scoreService.createScore(score1);
+
+
+        // String[] result = getScoreAndDescription(score);
+
+        // System.out.println("Score: " + score + ", AmountDecided: " + result[0] + ", Description: " + result[1]+ ", Standard: " + result[2]);
+
+
         return ResponseEntity.ok(score);
     }
 
