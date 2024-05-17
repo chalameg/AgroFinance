@@ -1,11 +1,9 @@
 package com.dxValley.AgroFinance.Controller;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import com.dxValley.AgroFinance.Models.DecisionRule;
 import com.dxValley.AgroFinance.Models.FarmerData;
-import com.dxValley.AgroFinance.Models.Score;
+import com.dxValley.AgroFinance.Models.FarmerDataScoreHistory;
 import com.dxValley.AgroFinance.Service.*;
 import com.dxValley.AgroFinance.exceptions.customExceptions.ResourceNotFoundException;
 
@@ -16,7 +14,6 @@ import com.dxValley.AgroFinance.DTO.ScoreRequestV2;
 import com.dxValley.AgroFinance.DTO.ScoreResponse;
 import com.dxValley.AgroFinance.Enums.ScoringDataType;
 import com.dxValley.AgroFinance.Models.Cohort;
-import com.dxValley.AgroFinance.Models.ScoringData;
 import com.dxValley.AgroFinance.Repository.FarmerDataRepository;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,87 +24,86 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "Score calculation APIs.")
 @RequestMapping("/api/score")
 public class ScoreCalculatorController {
-    private final ScoringDataService scoringDataService;
     private final CohortService cohortService;
     private  final DecisionRuleService decisionRuleService;
-    private final  ScoreService scoreService;
+    private final  FarmerDataScoreHistoryService scoreService;
     private final WeightService weightService;
     private final FarmerDataRepository farmerDataRepository;
   
-    @PostMapping("/calculatev2")
-    public ResponseEntity<Double> calculateScorev2(@RequestBody ScoreRequestV2 request) {
-        Double totalScore = 0D;
-        Double laa = request.getLoanApplicationAmount();
+    // previous score api
+    // @PostMapping("/calculatev2")
+    // public ResponseEntity<Double> calculateScorev2(@RequestBody ScoreRequestV2 request) {
+    //     Double totalScore = 0D;
+    //     Double laa = request.getLoanApplicationAmount();
 
-        totalScore += calculateScoreForType(ScoringDataType.AVERAGEDAILYBALANCE, request.getAverageDailyBalance(), laa);
-        totalScore += calculateScoreForType(ScoringDataType.ANNUALFARMINGINCOME, request.getAnnualFarmingIncome(), laa);
-        totalScore += calculateScoreForType(ScoringDataType.ANNUALNONFARMINGINCOME, request.getAnnualNonFarmingIncome(), laa);
-        // no need of laa for farming exprience and account age
-        totalScore += calculateScoreForType(ScoringDataType.FARMINGEXPERIENCE, request.getFarmingExperience(), laa); 
-        totalScore += calculateScoreForType(ScoringDataType.ACCOUNTAGE, request.getAccountAge(), laa);
+    //     totalScore += calculateScoreForType(ScoringDataType.AVERAGEDAILYBALANCE, request.getAverageDailyBalance(), laa);
+    //     totalScore += calculateScoreForType(ScoringDataType.ANNUALFARMINGINCOME, request.getAnnualFarmingIncome(), laa);
+    //     totalScore += calculateScoreForType(ScoringDataType.ANNUALNONFARMINGINCOME, request.getAnnualNonFarmingIncome(), laa);
+    //     // no need of laa for farming exprience and account age
+    //     totalScore += calculateScoreForType(ScoringDataType.FARMINGEXPERIENCE, request.getFarmingExperience(), laa); 
+    //     totalScore += calculateScoreForType(ScoringDataType.ACCOUNTAGE, request.getAccountAge(), laa);
 
-        totalScore += calculateScoreForType(ScoringDataType.ANNUALFURTUFARMINGINCOME, request.getAnnualFurtuFarmingIncome(), laa);
-        totalScore += calculateScoreForType(ScoringDataType.ASSET, request.getAsset(), laa);
-        totalScore += request.getIsLiterate() ? calculateScoreForYesNoType(ScoringDataType.LITERATE) : calculateScoreForYesNoType(ScoringDataType.ILLITERATE);
+    //     totalScore += calculateScoreForType(ScoringDataType.ANNUALFURTUFARMINGINCOME, request.getAnnualFurtuFarmingIncome(), laa);
+    //     totalScore += calculateScoreForType(ScoringDataType.ASSET, request.getAsset(), laa);
+    //     totalScore += request.getIsLiterate() ? calculateScoreForYesNoType(ScoringDataType.LITERATE) : calculateScoreForYesNoType(ScoringDataType.ILLITERATE);
         
-        if(request.getHasCreditHistory() & request.getHasPaidRegularly()){
-            if(!request.getHasDefaultHistory() & !request.getHasPenalityHistory()){
-                totalScore += calculateScoreForYesNoType(ScoringDataType.GOODBEHAVIOUR);
-            }else if(!request.getHasDefaultHistory() & request.getHasPenalityHistory()){
-                totalScore += calculateScoreForYesNoType(ScoringDataType.MODERATEBEHAVIOUR);
-            }else{
-                totalScore += calculateScoreForYesNoType(ScoringDataType.BADBEHAVIOUR);
-            }
-        }else{
-            totalScore += calculateScoreForYesNoType(ScoringDataType.BADBEHAVIOUR);
-        }
-        return ResponseEntity.ok(totalScore);
-    }
+    //     if(request.getHasCreditHistory() & request.getHasPaidRegularly()){
+    //         if(!request.getHasDefaultHistory() & !request.getHasPenalityHistory()){
+    //             totalScore += calculateScoreForYesNoType(ScoringDataType.GOODBEHAVIOUR);
+    //         }else if(!request.getHasDefaultHistory() & request.getHasPenalityHistory()){
+    //             totalScore += calculateScoreForYesNoType(ScoringDataType.MODERATEBEHAVIOUR);
+    //         }else{
+    //             totalScore += calculateScoreForYesNoType(ScoringDataType.BADBEHAVIOUR);
+    //         }
+    //     }else{
+    //         totalScore += calculateScoreForYesNoType(ScoringDataType.BADBEHAVIOUR);
+    //     }
+    //     return ResponseEntity.ok(totalScore);
+    // }
 
-    public  DecisionRule getScoreAndDescription(double value) {
-         List<DecisionRule> decisionRuleList = decisionRuleService.getAllDecisionRule();
-         DecisionRule decisionRule = new DecisionRule();
+    public DecisionRule getScoreAndDescription(double value) {
+        List<DecisionRule> decisionRuleList = decisionRuleService.getAllDecisionRule();
+        System.out.println("################################### " + decisionRuleList);
+    
         for (DecisionRule range : decisionRuleList) {
             if (range.getStartValue() <= value && value <= range.getEndValue()) {
-                decisionRule.setDescription(range.getDescription());
-                decisionRule.setAmountDecided(range.getAmountDecided());
-                decisionRule.setStandard(range.getStandard());
-            }else{
-                System.out.println("#################################################"+value);
-                throw new ResourceNotFoundException("The score is not within our decision rule!");
+                // Return the matching DecisionRule
+                return range;
             }
         }
-        return decisionRule;
+        // If no matching DecisionRule is found, throw the exception
+        throw new ResourceNotFoundException("The score is not within our decision rule!");
     }
+    
 
-    private Double calculateScoreForType(ScoringDataType type, Double value, Double laa) {
-        List<ScoringData> scoringDataList = scoringDataService.getScoringDataByType(type);
-        Double percentage;
+    // private Double calculateScoreForType(ScoringDataType type, Double value, Double laa) {
+    //     List<ScoringData> scoringDataList = scoringDataService.getScoringDataByType(type);
+    //     Double percentage;
 
-        if(type == ScoringDataType.ACCOUNTAGE | type == ScoringDataType.FARMINGEXPERIENCE){
-            percentage = value;
-        }else{
-            percentage = calculatePercentage(value, laa);
-        }
+    //     if(type == ScoringDataType.ACCOUNTAGE | type == ScoringDataType.FARMINGEXPERIENCE){
+    //         percentage = value;
+    //     }else{
+    //         percentage = calculatePercentage(value, laa);
+    //     }
 
-        for (ScoringData data : scoringDataList) {
-            if (percentage >= data.getRangeStart() && percentage <= data.getRangeEnd()) {
-                return data.getWeight();
-            }
-        }
-        return 0.0; // Return 0 if no matching range is found
-    }
+    //     for (ScoringData data : scoringDataList) {
+    //         if (percentage >= data.getRangeStart() && percentage <= data.getRangeEnd()) {
+    //             return data.getWeight();
+    //         }
+    //     }
+    //     return 0.0; // Return 0 if no matching range is found
+    // }
 
-    private Double calculateScoreForYesNoType(ScoringDataType type) {
-        List<ScoringData> scoringDataList = scoringDataService.getScoringDataByType(type);
+    // private Double calculateScoreForYesNoType(ScoringDataType type) {
+    //     List<ScoringData> scoringDataList = scoringDataService.getScoringDataByType(type);
 
-        Double score = 0.0;
+    //     Double score = 0.0;
 
-        for (ScoringData data : scoringDataList) {
-            score+=data.getWeight();
-        }
-        return score;
-    }
+    //     for (ScoringData data : scoringDataList) {
+    //         score+=data.getWeight();
+    //     }
+    //     return score;
+    // }
 
     public Double calculatePercentage(Double a, Double b) {
         if (b == 0) {
@@ -116,10 +112,13 @@ public class ScoreCalculatorController {
         return (a / b) * 100.0;
     }
     
+
     @PostMapping("/calculate/{cohortId}")
     public ResponseEntity<ScoreResponse> calculateScore(@RequestBody ScoreRequestV2 request, @PathVariable Long cohortId) {
         FarmerData farmerData = farmerDataRepository.findByFarmerAccount(request.getFarmerAccount());
 
+        // if score has been calculated with farmer data and cohortId and similar request happens then respond with existing score
+        // 
         var laa = farmerData.getLoanApplicationAmount();
         Double score = 0D;
 
@@ -227,13 +226,25 @@ public class ScoreCalculatorController {
 
         ScoreResponse scoreResponse = new ScoreResponse();
 
-        
-        ArrayList<FarmerData> datas = new ArrayList<>();
-        datas.add(farmerData);
-        Score score1 = new Score();
-        score1.setScore(score);
-        score1.setFarmerData(datas);
-        scoreService.createScore(score1);
+        // create farmerDataScoreHistory
+        FarmerDataScoreHistory farmerDataScoreHistory = new FarmerDataScoreHistory();
+        farmerDataScoreHistory.setScore(score);
+        farmerDataScoreHistory.setCohortId(cohortId);
+        farmerDataScoreHistory.setFarmerAccount(farmerData.getFarmerAccount());
+        farmerDataScoreHistory.setAccountAge(farmerData.getAccountAge());
+        farmerDataScoreHistory.setAnnualFarmingIncome(farmerData.getAnnualFarmingIncome());
+        farmerDataScoreHistory.setAnnualNonFarmingIncome(farmerData.getAnnualNonFarmingIncome());
+        farmerDataScoreHistory.setAnnualFurtuFarmingIncome(farmerData.getAnnualFurtuFarmingIncome());
+        farmerDataScoreHistory.setAsset(farmerData.getAsset());
+        farmerDataScoreHistory.setAverageDailyBalance(farmerData.getAverageDailyBalance());
+        farmerDataScoreHistory.setFarmingExperience(farmerData.getFarmingExperience());
+        farmerDataScoreHistory.setHasCreditHistory(farmerData.getHasCreditHistory());
+        farmerDataScoreHistory.setHasDefaultHistory(farmerData.getHasDefaultHistory());
+        farmerDataScoreHistory.setHasPaidRegularly(farmerData.getHasPaidRegularly());
+        farmerDataScoreHistory.setHasPenalityHistory(farmerData.getHasPenalityHistory());
+        farmerDataScoreHistory.setIsLiterate(farmerDataScoreHistory.getIsLiterate());
+        farmerDataScoreHistory.setLoanApplicationAmount(farmerData.getLoanApplicationAmount());
+        scoreService.createScore(farmerDataScoreHistory);
 
         DecisionRule decisionRule = getScoreAndDescription(score);
 

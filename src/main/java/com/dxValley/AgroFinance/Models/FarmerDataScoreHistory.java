@@ -3,21 +3,19 @@ package com.dxValley.AgroFinance.Models;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
 @Getter
 @Setter
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Score {
+public class FarmerDataScoreHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
     private double score;
-    private  Long cohortId;
-    private  Long farmerAccount;
+    private Long cohortId;
+    private Long farmerAccount;
     private Double loanApplicationAmount;
     private Double averageDailyBalance;
     private Double annualFurtuFarmingIncome;
@@ -31,8 +29,5 @@ public class Score {
     private Boolean hasPaidRegularly;
     private Boolean hasPenalityHistory;
     private Boolean hasDefaultHistory;
-
-
-
 
 }
