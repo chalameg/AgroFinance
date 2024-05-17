@@ -16,7 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping("/api/v1/decision-rule")
 @Tag(name = "Decision Rule APIS.")
-@CrossOrigin(origins = {"*"}, maxAge = 3600L)
 public class DecisionRuleController {
     @Autowired
     private DecisionRuleRepository decisionRuleRepository;

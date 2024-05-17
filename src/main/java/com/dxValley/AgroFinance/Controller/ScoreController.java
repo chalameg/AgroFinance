@@ -15,7 +15,6 @@ import java.util.List;
 @RequestMapping("/api/v1/score")
 @AllArgsConstructor
 @Tag(name = "Score APIs.")
-@CrossOrigin(origins = {"*"}, maxAge = 3600L)
 public class ScoreController {
     @Autowired
     private ScoreService scoreService;

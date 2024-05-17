@@ -25,4 +25,5 @@ public class ScoreRequestV2 {
     private Boolean hasPaidRegularly;
     private Boolean hasPenalityHistory;
     private Boolean hasDefaultHistory;
+    private Long farmerAccount;
 }

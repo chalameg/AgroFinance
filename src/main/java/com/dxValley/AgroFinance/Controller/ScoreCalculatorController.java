@@ -1,17 +1,23 @@
 package com.dxValley.AgroFinance.Controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.dxValley.AgroFinance.Models.DecisionRule;
+import com.dxValley.AgroFinance.Models.FarmerData;
 import com.dxValley.AgroFinance.Models.Score;
 import com.dxValley.AgroFinance.Service.*;
+import com.dxValley.AgroFinance.exceptions.customExceptions.ResourceNotFoundException;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.dxValley.AgroFinance.DTO.ScoreRequestV2;
+import com.dxValley.AgroFinance.DTO.ScoreResponse;
 import com.dxValley.AgroFinance.Enums.ScoringDataType;
 import com.dxValley.AgroFinance.Models.Cohort;
 import com.dxValley.AgroFinance.Models.ScoringData;
+import com.dxValley.AgroFinance.Repository.FarmerDataRepository;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +32,7 @@ public class ScoreCalculatorController {
     private  final DecisionRuleService decisionRuleService;
     private final  ScoreService scoreService;
     private final WeightService weightService;
+    private final FarmerDataRepository farmerDataRepository;
   
     @PostMapping("/calculatev2")
     public ResponseEntity<Double> calculateScorev2(@RequestBody ScoreRequestV2 request) {
@@ -54,17 +61,6 @@ public class ScoreCalculatorController {
         }else{
             totalScore += calculateScoreForYesNoType(ScoringDataType.BADBEHAVIOUR);
         }
-        totalScore+=12;
-
-        Score score1 = new Score();
-        score1.setScore(totalScore);
-
-
-        scoreService.createScore(score1);
-
-        DecisionRule decisionRule = getScoreAndDescription(totalScore);
-        System.out.println("######################################################## Score: " + totalScore + ", AmountDecided: " + decisionRule.getAmountDecided() + ", Description: " +decisionRule.getDescription()+ ", Standard: " + decisionRule.getStandard());
-
         return ResponseEntity.ok(totalScore);
     }
 
@@ -76,6 +72,9 @@ public class ScoreCalculatorController {
                 decisionRule.setDescription(range.getDescription());
                 decisionRule.setAmountDecided(range.getAmountDecided());
                 decisionRule.setStandard(range.getStandard());
+            }else{
+                System.out.println("#################################################"+value);
+                throw new ResourceNotFoundException("The score is not within our decision rule!");
             }
         }
         return decisionRule;
@@ -118,8 +117,10 @@ public class ScoreCalculatorController {
     }
     
     @PostMapping("/calculate/{cohortId}")
-    public ResponseEntity<Double> calculateScore(@RequestBody ScoreRequestV2 request, @PathVariable Long cohortId) {
-        var laa = request.getLoanApplicationAmount();
+    public ResponseEntity<ScoreResponse> calculateScore(@RequestBody ScoreRequestV2 request, @PathVariable Long cohortId) {
+        FarmerData farmerData = farmerDataRepository.findByFarmerAccount(request.getFarmerAccount());
+
+        var laa = farmerData.getLoanApplicationAmount();
         Double score = 0D;
 
         Cohort cohort = cohortService.getCohortById(cohortId);
@@ -127,7 +128,7 @@ public class ScoreCalculatorController {
          // Calculate score for Average Daily Balance
          if(cohort.getAverageDailyBalances().size() > 0){
              score += calculateComponentScore(
-                 request.getAverageDailyBalance(),
+                 farmerData.getAverageDailyBalance(),
                  laa,
                  cohort.getAverageDailyBalances().get(0).getBalanceThreshold(),
                  cohort.getAverageDailyBalances().get(0).getMinWeight(),
@@ -139,7 +140,7 @@ public class ScoreCalculatorController {
         // Calculate score for Annual Farming Income
         if(cohort.getAnnualFarmingIncomes().size() > 0){
             score += calculateComponentScore(
-                request.getAnnualFarmingIncome(),
+                farmerData.getAnnualFarmingIncome(),
                 laa,
                 cohort.getAnnualFarmingIncomes().get(0).getBalanceThreshold(),
                 cohort.getAnnualFarmingIncomes().get(0).getMinWeight(),
@@ -150,7 +151,7 @@ public class ScoreCalculatorController {
         // Calculate score for Annual Non Farming Income
         if(cohort.getAnnualNonFarmingIncomes().size() > 0){
             score += calculateComponentScore(
-                request.getAnnualNonFarmingIncome(),
+                farmerData.getAnnualNonFarmingIncome(),
                 laa,
                 cohort.getAnnualNonFarmingIncomes().get(0).getBalanceThreshold(),
                 cohort.getAnnualNonFarmingIncomes().get(0).getMinWeight(),
@@ -161,7 +162,7 @@ public class ScoreCalculatorController {
          // Calculate score for Annual Furtu Farming Income
          if(cohort.getAnnualFurtuFarmingIncomes().size() > 0){
             score += calculateAssetOrFurtuScore(
-                request.getAnnualFurtuFarmingIncome(),
+                farmerData.getAnnualFurtuFarmingIncome(),
                 laa,
                 cohort.getAnnualFurtuFarmingIncomes().get(0).getBalanceThreshold(),
                 cohort.getAnnualFurtuFarmingIncomes().get(0).getMinBalanceThreshold(),
@@ -173,7 +174,7 @@ public class ScoreCalculatorController {
          // Calculate score for Asset
          if(cohort.getAssets().size() > 0){
             score += calculateAssetOrFurtuScore(
-                request.getAsset(),
+                farmerData.getAsset(),
                 laa,
                 cohort.getAssets().get(0).getBalanceThreshold(),
                 cohort.getAssets().get(0).getMinBalanceThreshold(),
@@ -185,7 +186,7 @@ public class ScoreCalculatorController {
         // Calculate score for account duration
         if(cohort.getAccountDurations().size() > 0){
             score += calculateAccountAndExprienceScore(
-                request.getAccountAge(),
+                farmerData.getAccountAge(),
                 cohort.getAccountDurations().get(0).getMaxMonth(),
                 cohort.getAccountDurations().get(0).getMinMonth(),
                 cohort.getAccountDurations().get(0).getMinWeight(),
@@ -196,7 +197,7 @@ public class ScoreCalculatorController {
         // Calculate score for farming exprience
         if(cohort.getFarmingExpriences().size() > 0){
             score += calculateAccountAndExprienceScore(
-                request.getFarmingExperience(),
+                farmerData.getFarmingExperience(),
                 cohort.getFarmingExpriences().get(0).getMaxMonth(),
                 cohort.getFarmingExpriences().get(0).getMinMonth(),
                 cohort.getFarmingExpriences().get(0).getMinWeight(),
@@ -205,18 +206,17 @@ public class ScoreCalculatorController {
         }
 
         // education
-        if(request.getIsLiterate()){
+        if(farmerData.getIsLiterate()){
             score+=weightService.getWeight(ScoringDataType.LITERATE).getWeight();
         }else{
             score+=weightService.getWeight(ScoringDataType.LITERATE).getWeight();
         }
 
-
         // behaivor
-        if(request.getHasCreditHistory() & request.getHasPaidRegularly()){
-            if(!request.getHasDefaultHistory() & !request.getHasPenalityHistory()){
+        if(farmerData.getHasCreditHistory() & farmerData.getHasPaidRegularly()){
+            if(!farmerData.getHasDefaultHistory() & !farmerData.getHasPenalityHistory()){
                 score += weightService.getWeight(ScoringDataType.GOODBEHAVIOUR).getWeight();
-            }else if(!request.getHasDefaultHistory() & request.getHasPenalityHistory()){
+            }else if(!farmerData.getHasDefaultHistory() & farmerData.getHasPenalityHistory()){
                 score += weightService.getWeight(ScoringDataType.MODERATEBEHAVIOUR).getWeight();
             }else{
                 score += weightService.getWeight(ScoringDataType.BADBEHAVIOUR).getWeight();
@@ -225,18 +225,24 @@ public class ScoreCalculatorController {
             score += weightService.getWeight(ScoringDataType.BADBEHAVIOUR).getWeight();
         }
 
+        ScoreResponse scoreResponse = new ScoreResponse();
 
-        // Score score1 = new Score();
-        // score1.setScore((double)score);
-        // scoreService.createScore(score1);
+        
+        ArrayList<FarmerData> datas = new ArrayList<>();
+        datas.add(farmerData);
+        Score score1 = new Score();
+        score1.setScore(score);
+        score1.setFarmerData(datas);
+        scoreService.createScore(score1);
 
+        DecisionRule decisionRule = getScoreAndDescription(score);
 
-        // String[] result = getScoreAndDescription(score);
-
-        // System.out.println("Score: " + score + ", AmountDecided: " + result[0] + ", Description: " + result[1]+ ", Standard: " + result[2]);
-
-
-        return ResponseEntity.ok(score);
+        scoreResponse.setTotalScore(score);
+        scoreResponse.setAmountDecided(decisionRule.getAmountDecided());
+        scoreResponse.setDescription(decisionRule.getDescription());
+        scoreResponse.setStandard(decisionRule.getStandard());
+       
+        return ResponseEntity.ok(scoreResponse);
     }
 
     public Double calculateComponentScore(
@@ -291,7 +297,6 @@ public class ScoreCalculatorController {
             return Math.max(calculatedWeight, minWeight);
         }
     }
-
 
 }
 

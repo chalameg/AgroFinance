@@ -5,6 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface FarmerDataRepository extends JpaRepository<FarmerData, Long> {
     FarmerData findByFarmerAccount(Long farmerAccount);
-    //custom query method
-
+   
 }
